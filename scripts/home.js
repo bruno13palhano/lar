@@ -2,41 +2,44 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
 let auth = firebase.auth();
+let userDados;
 
-function ler(userCollection){
-    db.collection(userCollection).get().then(snapshot =>{
-        snapshot.forEach(item =>{
-            console.log(item.data());
-        });
-    }).catch(err =>{
-        console.log(err);
-    });
-}
-
+//função para fazer logout
 function logout(callback){
     auth.signOut().then(() =>{
         callback();
+
     }).catch(err => {
         console.log(err);
     });
 }
 
+//Botão logout
 $("#logout").click(() => {
     logout(() => {
-        window.open("/index.html", "_self");
+        fetch('/', {
+            method: 'get'
+        
+        }).then(response => {
+            //redireciona para página de login
+            window.open(response.url, '_self');
+
+        }).catch(err => {
+            console.log(err);
+        });
     });
 });
-// ler();
 
 
 auth.onAuthStateChanged(function(user) {
     if (user) {
-        // User is signed in.
-        setHeader(user.email);
-        console.log(user.email);
-        ler(user.email);
+        //Login bem sucedido
+        start(user);
+        // console.log(user.email);
+        // ler(user.email);
         console.log(user);
-    } else {
+
+    }else {
         // No user is signed in.
         $("body").html("<h1>Erro 401</h1>"
                     +"<h2>NOT AUTHORIZED</h2>"
@@ -44,9 +47,25 @@ auth.onAuthStateChanged(function(user) {
     }
   });
 
-function setHeader(userEmail){
-      $("#h1_welcome").text(`Welcome ${userEmail}`);
+function setHeader(user){
+    $("#h1_welcome").text(`${user.name} ${user.lastName}`);
 }
 
+async function start(user){
+    console.log("print externo do email do usuário ", user.email);
+    
+    await db.collection(user.email).get().then(snapshot =>{
+        snapshot.forEach(item =>{
+            // console.log(item.data());
+            userDados = item.data();
+        });
 
-console.log($("[key=1]"));
+        console.log(snapshot);//falta definir o que a home faz
+
+        console.log("dados:", userDados);
+        setHeader(userDados);
+
+    }).catch(err =>{
+        console.log(err);
+    });
+}

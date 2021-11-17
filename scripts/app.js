@@ -8,6 +8,43 @@ const firebaseConfig = {
     measurementId: "G-H9CGTXXMCP"
 };
 
+
+class User{
+    constructor(email, password, name, lastName=""){
+        this._email = email;
+        this._password = password;
+        this._name = name;
+        this._lastName = lastName;
+    }
+
+    setEmail(email){
+        this._email = email;
+    }
+    getEmail(){
+        return this._email;
+    }
+
+    setPassword(password){
+        this._password = password;
+    }
+    getPassword(){
+        return this._password;
+    }
+
+    setName(name){
+        this._name = name;
+    }
+    getName(){
+        return this._name;
+    }
+
+    setLastName(lastName){
+        this._name = lastName;
+    }
+    getLastName(){
+        return this._lastName;
+    }
+}
 // firebase.initializeApp(firebaseConfig);
 // const db = firebase.firestore();
 
